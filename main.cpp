@@ -10,9 +10,7 @@ using namespace std;
 /**/
 
 double funcao (double x1, double x2)
-{
     return (double) ( sin ( pow(x1, 2) - pow(x2, 2) ) * cos ( pow(x1, 2) + pow(x2, 2) ) );
-}
 
 /*retorna o valor da derivada de f em x1 no ponto (x1,x2)*/
 double DerivadaX1 (double x1, double x2)
@@ -43,6 +41,17 @@ void GradienteF (double x1, double x2, vector<double> &gradiente)
     gradiente.resize(2);
     gradiente[0] = DerivadaX1(x1, x2);
     gradiente[1] = DerivadaX2(x1, x2);
+}
+/*funcao auxiliar para o metodo da secao aurea*/
+double PhiDeT (vector<double> pontox, double t, vector<double> direcao)
+{
+    int k = 0;
+    for (auto const &dir: direcao)
+    {
+        pontox[k]  += dir*t
+        k++;
+    }
+    return funcao(pontox[0], pontox[1]);
 }
 
 double MetodoGradiente (vector<double> pontox)
@@ -86,6 +95,23 @@ double BuscaArmijo (vector<double> x)
     return t;
 }
 
+double secaoAurea (double ro, double epslon, vector<double> pontox, vector<double> direcao)
+{
+    double a = 0;
+    double s = ro;
+    double b = 2*ro;
+    /*obtencao do intervalo [a,b]*/
+    while (PhiDeT(pontox, b, direcao) < PhiDeT(pontox, s, direcao))
+    {
+        a = s;
+        s = b;
+        b = 2*b;
+    }
+
+    /*Obtencao de t*/
+    
+
+}
 
 
 
