@@ -3,14 +3,16 @@
 #include <vector>
 
 
-#define OK      0
-
+#define OK                      0
+#define ERRO_DIMENSAO_MATRIZ    1
 using namespace std;
 
 /**/
 
 double funcao (double x1, double x2)
+{
     return (double) ( sin ( pow(x1, 2) - pow(x2, 2) ) * cos ( pow(x1, 2) + pow(x2, 2) ) );
+}
 
 /*retorna o valor da derivada de f em x1 no ponto (x1,x2)*/
 double DerivadaX1 (double x1, double x2)
@@ -48,7 +50,7 @@ double PhiDeT (vector<double> pontox, double t, vector<double> direcao)
     int k = 0;
     for (auto const &dir: direcao)
     {
-        pontox[k]  += dir*t
+        pontox[k]  += dir*t;
         k++;
     }
     return funcao(pontox[0], pontox[1]);
@@ -95,7 +97,7 @@ double BuscaArmijo (vector<double> x)
     return t;
 }
 
-double secaoAurea (double ro, double epslon, vector<double> pontox, vector<double> direcao)
+double SecaoAurea (double ro, double epsolon, vector<double> pontox, vector<double> direcao)
 {
     double a = 0;
     double s = ro;
@@ -109,14 +111,67 @@ double secaoAurea (double ro, double epslon, vector<double> pontox, vector<doubl
     }
 
     /*Obtencao de t*/
-    
-
+    return a;
 }
 
+int MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector<vector<double>> &resultado)
+{
 
+    unsigned linha, coluna, index;
+    if (m1[0].size() != m2.size())
+        return ERRO_DIMENSAO_MATRIZ;
+
+    //mxp * pxn = mxn
+    //pra linha da primeira
+    //pra colunas da segunda
+    resultado.resize(m1.size());
+    for (linha = 0; linha < (unsigned) m1.size(); linha++)
+    {
+        resultado[linha].resize(m2[0].size(), 0);
+        for (coluna = 0; coluna < (unsigned) m2[0].size(); coluna++)
+            for (index = 0; index < (unsigned) m2.size(); index++)
+                resultado[linha][coluna] += m1[linha][index] * m2[index][linha];
+    }
+    return OK;
+}
+
+void PrintarMatriz (vector<vector<double>> m1)
+{
+    for (auto const &linha: m1)
+    {
+        for (auto const &coluna: linha)
+            cout << coluna << "\t";
+        cout << endl;
+    }
+}
 
 int main ()
 {
+    vector<vector<double>> m1;
+    vector<vector<double>> m2;
+    vector<vector<double>> resultado;
+    vector<double> v1;
+    vector<double> v2;
+    v1.resize(4, 2);
+    v2.resize(3, 1);
+
+    m1.push_back(v1);
+    m1.push_back(v1);
+
+    m2.push_back(v2);
+    m2.push_back(v2);
+    m2.push_back(v2);
+    m2.push_back(v2);
+
+
+    cout << "m1:" << endl;
+    PrintarMatriz(m1);
+    cout << "m2:" << endl;
+    PrintarMatriz(m2);
+    cout << "resultado:" << endl;
+    if (MultiplicarMatrizes(m1, m2, resultado) == ERRO_DIMENSAO_MATRIZ)
+        cout << "Erro Multiplicando Matrizes" << endl;
+    PrintarMatriz(resultado);
 
     return OK;
 }
