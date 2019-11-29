@@ -22,6 +22,9 @@ double PhiDeT (vector<double> pontox, double t, vector<vector<double>> direcao);
 
 void CalcularHessiana(vector<double> pontox, vector<vector<double>> &hessiana);
 
+void AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, vector<double> pontoxAntigo, vector<vector<double>> gradiente, vector<vector<double>> gradienteAntigo);
+
+
 /*Metodo do gradiente*/
 double MetodoGradiente(vector <double> &pontox, bool metodo, double ro, double epsolon);
 double MetodoGradiente(vector <double> &pontox, bool metodo, double epsolon, double eta, double gama);
@@ -32,6 +35,7 @@ double MetodoNewton (vector<double> &pontox, bool metodo, double epsolon, double
 double MetodoNewton (vector<double> &pontox, bool metodo, double epsolon, double gama, double eta);
 double MetodoNewton (vector<double> &pontox, bool metodo, double epsolon, double ro, double gama, double eta);
 
+double MetodoQuaseNewton(vector<double> &pontox, bool metodo, double epsolon, double ro, double gama, double eta);
 
 
 /*Buscas*/

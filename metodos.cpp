@@ -74,10 +74,77 @@ void CalcularHessiana(vector<double> pontox, vector<vector<double>> &hessiana)
 
 }
 
-void AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, vector<double> pontoxAntigo, vector<vector<double> gradiente, vector<vector<double> gradienteAntigo)
+void AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, vector<double> pontoxAntigo, vector<vector<double>> gradiente, vector<vector<double>> gradienteAntigo)
 {
     /*BFGS*/
-    double
+    vector<vector<double>> p, q;
+    vector<vector<double>> pt, qt;
+    vector<vector<double>> resultadoAuxiliar, resultadoAuxiliar2, resultadoParcial;
+    double escalarAuxiliar;
+    double denominador;
+    unsigned index, colunas, coluna, linha;
+
+
+    p.resize(pontox.size());
+    pt.resize(1);
+    for (index = 0; index < (unsigned) pontox.size(); index++)
+    {
+        p[index].push_back(pontox[index] - pontoxAntigo[index]);
+        pt[0].push_back(pontox[index] - pontoxAntigo[index]);
+    }
+
+    q.resize(gradiente.size());
+    qt.resize(gradiente[0].size());
+    for(colunas = 0; colunas < (unsigned) gradiente[0].size(); colunas++)
+        qt[colunas].resize(gradiente.size());
+    for (index = 0; index < (unsigned) gradiente.size(); index++)
+    {
+        q[index].resize(gradiente[0].size());
+        for(colunas = 0; colunas < (unsigned) gradiente[0].size(); colunas++)
+        {
+            q[index][colunas] = (gradiente[index][colunas] - gradienteAntigo[index][colunas]);
+            // cout << "Q[" << index << "][" << colunas << "] = " << gradiente[index][colunas] << endl;
+            qt[colunas][index] = q[index][colunas];
+        }
+    }
+
+    /*1 + esse coisa*/
+    MultiplicarMatrizes(qt, matrizH, resultadoAuxiliar);
+    denominador = MultiplicarMatrizes(pt, q);
+    escalarAuxiliar = 1;
+    if (denominador != 0)
+        escalarAuxiliar = 1 + (MultiplicarMatrizes(resultadoAuxiliar, q) / denominador);
+
+
+    /*Logo depois do parenteses*/
+    MultiplicarMatrizes(p, pt, resultadoParcial);
+    for (auto &vect: resultadoParcial)
+        for (auto &var: vect)
+        {
+            var *= escalarAuxiliar;
+            if (denominador != 0)
+                var /= denominador;
+        }
+
+    resultadoAuxiliar.clear();
+    MultiplicarMatrizes(p,qt, resultadoAuxiliar);
+    MultiplicarMatrizes(resultadoAuxiliar, matrizH, resultadoAuxiliar);
+    MultiplicarMatrizes(matrizH, q, resultadoAuxiliar2);
+    MultiplicarMatrizes(resultadoAuxiliar2, pt, resultadoAuxiliar2);
+    OperarMatrizes(resultadoAuxiliar, resultadoAuxiliar2, resultadoAuxiliar, OPCAO_SOMA);
+    if (denominador != 0)
+        for (auto &vect: resultadoAuxiliar)
+            for(auto &var: vect)
+                var /= denominador;
+
+    OperarMatrizes(resultadoParcial, resultadoAuxiliar, resultadoParcial, OPCAO_SUBTRACAO);
+    OperarMatrizes(matrizH, resultadoParcial, matrizH, OPCAO_SOMA);
+
+    PrintarMatriz (matrizH);
+    cout << endl << endl;
+    // cout << "pula" << endl;
+    // PrintarMatriz(pt);
+
 }
 
 double SecaoAurea (double ro, double epsolon, vector<double> pontox, vector<vector<double>> direcao)
@@ -262,16 +329,16 @@ double MetodoNewton (vector<double> &pontox, bool metodo, double epsolon, double
 }
 
 
-double MetodoQuaseNewton(double<vector> &pontox, bool metodo, double epsolon, double ro, double gama, double eta)
+double MetodoQuaseNewton(vector<double> &pontox, bool metodo, double epsolon, double ro, double gama, double eta)
 {
     vector<vector<double>> matrizH;
     vector<vector<double>> gradiente;
     vector<double> auxGradiente;
-    vector<vector<double>> direcao
+    vector<vector<double>> direcao;
     vector<double> pontoxAntigo;
     vector<vector<double>> gradienteAntigo;
-    unsigned k = 0;
-
+    unsigned index, k = 0;
+    double t;
 
     /*-identidade*/
     matrizH.resize(2);
@@ -297,10 +364,11 @@ double MetodoQuaseNewton(double<vector> &pontox, bool metodo, double epsolon, do
 
         gradienteAntigo.clear();
         gradienteAntigo.resize(2);
-        for (auto const &grad: gradiente)
-            gradienteAntigo.push_back(grad);
+        gradienteAntigo[0].push_back(auxGradiente[0]);
+        gradienteAntigo[1].push_back(auxGradiente[1]);
 
-        MultiplicarMatrizes(matrizH, gradiente, direcao);
+
+        MultiplicarMatrizes(matrizH, gradienteAntigo, direcao);
 
         if (metodo == BUSCA_SECAO_AUREA)
             t = SecaoAurea (ro, epsolon, pontox, direcao);
@@ -310,9 +378,20 @@ double MetodoQuaseNewton(double<vector> &pontox, bool metodo, double epsolon, do
         for (index = 0; index < (unsigned) pontox.size(); index++)
             pontox[index] += t * direcao[index][0];
 
-        AtualizarMatrizH(matrizH);
         k++;
+        cout << "K = " << k-1 << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
+        cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
+
+        auxGradiente.clear();
+        gradiente.clear();
+        gradiente.resize(2);
+        GradienteF(pontox[0], pontox[1], auxGradiente);
+        gradiente[0].push_back(auxGradiente[0]);
+        gradiente[1].push_back(auxGradiente[1]);
+        AtualizarMatrizH(matrizH, pontox, pontoxAntigo, gradiente, gradienteAntigo);
+
+
 
     }
-
+    return funcao(pontox[0], pontox[1]);
 }

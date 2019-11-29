@@ -10,6 +10,7 @@ int main ()
     pontox.push_back(0.8);
     cout << "funcao ( " << pontox[0] << "," << pontox[1] << "): " << funcao(pontox[0], pontox[1]) << endl;
     // cout << "resposta: " << MetodoGradiente(pontox, BUSCA_ARMIJO, 0.0000001, 0.001, 0.7) << endl;
-    cout << MetodoNewton(pontox, BUSCA_ARMIJO, 0.0000001, 0.7, 0.1) << endl;
+    // cout << MetodoNewton(pontox, BUSCA_ARMIJO, 0.0000001, 0.7, 0.1) << endl;
+    cout << MetodoQuaseNewton(pontox, BUSCA_SECAO_AUREA, 0.00000001, 0.1, 0.7, 0.01);
     return OK;
 }

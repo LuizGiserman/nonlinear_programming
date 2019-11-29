@@ -6,16 +6,22 @@ double MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2
 {
 
     unsigned linha, coluna, index;
+    bool alocarMemoria;
     if (m1[0].size() != m2.size())
         return ERRO_DIMENSAO_MATRIZ;
 
     //mxp * pxn = mxn
     //pra linha da primeira
     //pra colunas da segunda
-    resultado.resize(m1.size());
+    if(resultado.size() == 0)
+    {
+        alocarMemoria = true;
+        resultado.resize(m1.size());
+    }
     for (linha = 0; linha < (unsigned) m1.size(); linha++)
     {
-        resultado[linha].resize(m2[0].size(), 0);
+        if(alocarMemoria)
+            resultado[linha].resize(m2[0].size(), 0);
         for (coluna = 0; coluna < (unsigned) m2[0].size(); coluna++)
             for (index = 0; index < (unsigned) m2.size(); index++)
                 resultado[linha][coluna] += m1[linha][index] * m2[index][linha];
@@ -32,7 +38,7 @@ double MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2
 }
 
 /*matriz X vetor*/
-double MultiplicarMatrizes (vector<vector<double>> m1, vector<double> v1, vector<vector<double> &resultado)
+double MultiplicarMatrizes (vector<vector<double>> m1, vector<double> v1, vector<vector<double>> &resultado)
 {
     vector<vector<double>> m2;
     m2.push_back(v1);
@@ -75,7 +81,34 @@ int InverterDxD (vector<vector<double>> &m1)
     return OK;
 }
 
-int SubtrairMatrizes (vector<vector<double> m1, vector<vector<double> m2)
+int OperarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector<vector<double>> &resultado, bool soma)
 {
-    
+
+    unsigned linha, coluna;
+    bool alocarMemoria;
+
+    if (m1.size() != m2.size() || m1[0].size() != m2[0].size())
+    {
+        cout << "Erro ERRO_DIMENSAO_MATRIZ" << endl;
+        return ERRO_DIMENSAO_MATRIZ;
+    }
+
+    if (resultado.size() == 0)
+    {
+        alocarMemoria = true;
+        resultado.resize(m1.size());
+    }
+    for (linha = 0; linha < (unsigned) m1.size(); linha++)
+    {
+        if (alocarMemoria)
+            m1[linha].resize(m1[0].size());
+        for(coluna = 0; coluna < (unsigned) m1[0].size(); coluna++)
+            if (soma)
+                resultado[linha][coluna] = m1[linha][coluna] + m2[linha][coluna];
+            else
+                resultado[linha][coluna] = m1[linha][coluna] - m2[linha][coluna];
+
+    }
+
+    return OK;
 }
