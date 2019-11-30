@@ -22,7 +22,7 @@ double PhiDeT (vector<double> pontox, double t, vector<vector<double>> direcao);
 
 void CalcularHessiana(vector<double> pontox, vector<vector<double>> &hessiana);
 
-void AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, vector<double> pontoxAntigo, vector<vector<double>> gradiente, vector<vector<double>> gradienteAntigo);
+bool AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, vector<double> pontoxAntigo, vector<vector<double>> gradiente, vector<vector<double>> gradienteAntigo);
 
 
 /*Metodo do gradiente*/

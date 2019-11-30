@@ -38,9 +38,11 @@ double DerivadaX2 (double x1, double x2)
 /*Calcula o gradiente de F no ponto (x1, x2)*/
 void GradienteF (double x1, double x2, vector<double> &gradiente)
 {
+    gradiente.clear();
     gradiente.resize(2);
     gradiente[0] = DerivadaX1(x1, x2);
     gradiente[1] = DerivadaX2(x1, x2);
+
 }
 /*funcao auxiliar para o metodo da secao aurea*/
 double PhiDeT (vector<double> pontox, double t, vector<vector<double>> direcao)
@@ -74,7 +76,7 @@ void CalcularHessiana(vector<double> pontox, vector<vector<double>> &hessiana)
 
 }
 
-void AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, vector<double> pontoxAntigo, vector<vector<double>> gradiente, vector<vector<double>> gradienteAntigo)
+bool AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, vector<double> pontoxAntigo, vector<vector<double>> gradiente, vector<vector<double>> gradienteAntigo)
 {
     /*BFGS*/
     vector<vector<double>> p, q;
@@ -107,13 +109,20 @@ void AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, ve
             qt[colunas][index] = q[index][colunas];
         }
     }
+    // q.resize(gradiente.size());
+    // qt.resize(1);
+    // for (index =0; index < (unsigned) gradiente.size(); index++)
+    // {
+    //     q[index].push_back(gradiente[index][0] - gradienteAntigo[index][0]);
+    //     qt[0].push_back(gradiente[index][0] - gradienteAntigo[index][0]);
+    // }
 
     /*1 + esse coisa*/
     MultiplicarMatrizes(qt, matrizH, resultadoAuxiliar);
     denominador = MultiplicarMatrizes(pt, q);
-    escalarAuxiliar = 1;
-    if (denominador != 0)
-        escalarAuxiliar = 1 + (MultiplicarMatrizes(resultadoAuxiliar, q) / denominador);
+    if(denominador == 0)
+        return !OK;
+    escalarAuxiliar = 1 + (MultiplicarMatrizes(resultadoAuxiliar, q) / denominador);
 
 
     /*Logo depois do parenteses*/
@@ -122,8 +131,7 @@ void AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, ve
         for (auto &var: vect)
         {
             var *= escalarAuxiliar;
-            if (denominador != 0)
-                var /= denominador;
+            var /= denominador;
         }
 
     resultadoAuxiliar.clear();
@@ -132,19 +140,19 @@ void AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, ve
     MultiplicarMatrizes(matrizH, q, resultadoAuxiliar2);
     MultiplicarMatrizes(resultadoAuxiliar2, pt, resultadoAuxiliar2);
     OperarMatrizes(resultadoAuxiliar, resultadoAuxiliar2, resultadoAuxiliar, OPCAO_SOMA);
-    if (denominador != 0)
-        for (auto &vect: resultadoAuxiliar)
-            for(auto &var: vect)
-                var /= denominador;
+    for (auto &vect: resultadoAuxiliar)
+        for(auto &var: vect)
+            var /= denominador;
 
     OperarMatrizes(resultadoParcial, resultadoAuxiliar, resultadoParcial, OPCAO_SUBTRACAO);
     OperarMatrizes(matrizH, resultadoParcial, matrizH, OPCAO_SOMA);
 
-    PrintarMatriz (matrizH);
-    cout << endl << endl;
+    // PrintarMatriz (matrizH);
+    // cout << endl << endl;
     // cout << "pula" << endl;
     // PrintarMatriz(pt);
 
+    return OK;
 }
 
 double SecaoAurea (double ro, double epsolon, vector<double> pontox, vector<vector<double>> direcao)
@@ -162,7 +170,7 @@ double SecaoAurea (double ro, double epsolon, vector<double> pontox, vector<vect
         a = s;
         s = b;
         b = 2*b;
-        cout << "(a, b): " << a << ", " << b << endl;
+        // cout << "(a, b): " << a << ", " << b << endl;
     }
 
     /*Obtencao de t*/
@@ -233,11 +241,11 @@ double MetodoGradiente (vector<double> &pontox, bool metodo, double ro, double e
 
     GradienteF(pontox[0], pontox[1], gradiente);
     /*Gradiente negativo*/
-    cout << "calculou o gradiente" << endl;
-    cout << "Gradiente: (" << gradiente[0] << "," << gradiente[1] << ")" << endl;
-    while(Modulo(gradiente[0]) > Modulo(epsolon) && Modulo(gradiente[1]) > Modulo(epsolon))
+    // cout << "calculou o gradiente" << endl;
+
+    while(Modulo(gradiente[0]) > epsolon && Modulo(gradiente[1]) > epsolon)
     {
-        cout << endl << endl << "Gradiente: (" << gradiente[0] << "," << gradiente[1] << ")" << endl;
+        // cout << endl << endl << "Gradiente: (" << gradiente[0] << "," << gradiente[1] << ")" << endl;
         /*d = -gradiente transposto*/
         for (auto const &var: gradiente)
         {
@@ -245,7 +253,11 @@ double MetodoGradiente (vector<double> &pontox, bool metodo, double ro, double e
             direcao.push_back(auxiliar);
             auxiliar.clear();
         }
-
+        if (k < 2)
+        {
+            PrintarMatriz(direcao);
+            cout << endl << endl;
+        }
         /*metodo armijo ou secao aurea*/
         if (metodo == BUSCA_ARMIJO)
             t = BuscaArmijo(pontox, direcao, gradiente, gama, eta);
@@ -255,12 +267,13 @@ double MetodoGradiente (vector<double> &pontox, bool metodo, double ro, double e
         for (index = 0; index < (unsigned) pontox.size(); index++)
             pontox[index] += t * direcao[index][0];
         k++;
-        cout << "K = " << k-1 << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
-        cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
+        // cout << "K = " << k-1 << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
+        // cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
         GradienteF(pontox[0], pontox[1], gradiente);
         direcao.clear();
     }
-
+    cout << "K = " << k << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
+    cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
     return funcao(pontox[0], pontox[1]);
 
 }
@@ -313,8 +326,8 @@ double MetodoNewton (vector<double> &pontox, bool metodo, double epsolon, double
             pontox[index] += t * direcao[index][0];
         k++;
 
-        cout << "K = " << k-1 << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
-        cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
+        // cout << "K = " << k-1 << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
+        // cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
 
         hessianaInversa.clear();
         direcao.clear();
@@ -323,7 +336,8 @@ double MetodoNewton (vector<double> &pontox, bool metodo, double epsolon, double
         gradiente[1][0] = auxGradiente[1];
 
     }
-
+    cout << "K = " << k-1 << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
+    cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
     return funcao (pontox[0], pontox[1]);
 
 }
@@ -348,12 +362,16 @@ double MetodoQuaseNewton(vector<double> &pontox, bool metodo, double epsolon, do
     matrizH[0][1] = 0;
     matrizH[1][0] = 0;
     matrizH[1][1] = -1;
+    //-1 0
+    //0 -1
+
 
 
     GradienteF(pontox[0], pontox[1], auxGradiente);
     gradiente.resize(2);
     gradiente[0].push_back(auxGradiente[0]);
     gradiente[1].push_back(auxGradiente[1]);
+    // PrintarMatriz(gradiente);
 
     while ((Modulo(gradiente[0][0]) > epsolon) && (Modulo(gradiente[1][0]) > epsolon))
     {
@@ -367,9 +385,12 @@ double MetodoQuaseNewton(vector<double> &pontox, bool metodo, double epsolon, do
         gradienteAntigo[0].push_back(auxGradiente[0]);
         gradienteAntigo[1].push_back(auxGradiente[1]);
 
-
         MultiplicarMatrizes(matrizH, gradienteAntigo, direcao);
-
+        // if ( k < 4)
+        // {
+        //     cout << "dir" << endl;
+        //     PrintarMatriz(direcao);
+        // }
         if (metodo == BUSCA_SECAO_AUREA)
             t = SecaoAurea (ro, epsolon, pontox, direcao);
         else
@@ -379,19 +400,22 @@ double MetodoQuaseNewton(vector<double> &pontox, bool metodo, double epsolon, do
             pontox[index] += t * direcao[index][0];
 
         k++;
-        cout << "K = " << k-1 << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
-        cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
+        // cout << "K = " << k-1 << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
+        // cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
 
-        auxGradiente.clear();
         gradiente.clear();
         gradiente.resize(2);
         GradienteF(pontox[0], pontox[1], auxGradiente);
         gradiente[0].push_back(auxGradiente[0]);
         gradiente[1].push_back(auxGradiente[1]);
-        AtualizarMatrizH(matrizH, pontox, pontoxAntigo, gradiente, gradienteAntigo);
-
-
-
+        if(AtualizarMatrizH(matrizH, pontox, pontoxAntigo, gradiente, gradienteAntigo) == !OK)
+        {
+            cout << "erro denominador = 0" << endl;
+            return funcao(pontox[0], pontox[1]);
+        }
     }
+    cout << "K = " << k-1 << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
+    cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
+    gradiente.clear();
     return funcao(pontox[0], pontox[1]);
 }

@@ -6,7 +6,9 @@ double MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2
 {
 
     unsigned linha, coluna, index;
-    bool alocarMemoria;
+    vector<vector<double>> resultadoAux;
+    bool alocarMemoria = false;
+
     if (m1[0].size() != m2.size())
         return ERRO_DIMENSAO_MATRIZ;
 
@@ -14,20 +16,34 @@ double MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2
     //pra linha da primeira
     //pra colunas da segunda
     if(resultado.size() == 0)
-    {
         alocarMemoria = true;
-        resultado.resize(m1.size());
-    }
+
+    resultadoAux.resize(m1.size());
     for (linha = 0; linha < (unsigned) m1.size(); linha++)
     {
-        if(alocarMemoria)
-            resultado[linha].resize(m2[0].size(), 0);
+            resultadoAux[linha].resize(m2[0].size(), 0);
         for (coluna = 0; coluna < (unsigned) m2[0].size(); coluna++)
             for (index = 0; index < (unsigned) m2.size(); index++)
-                resultado[linha][coluna] += m1[linha][index] * m2[index][linha];
+            {
+                    resultadoAux[linha][coluna] += m1[linha][index] * m2[index][coluna];
+                // cout << "linha:coluna:valor" << linha << ":" << coluna << ":" << resultado[linha][coluna] << endl;
+                // cout << "m2["<< index << "][" << linha << "] " << m2[index][linha] << endl;
+            }
     }
+
     if (m1.size() == 1 && m2[0].size() == 1 )
-        return resultado[0][0];
+        return resultadoAux[0][0];
+
+    /*tendo que fazer isso tudo pq resultado pode ser uma das matrizes de entrada*/
+    resultado.clear();
+    resultado.resize(resultadoAux.size());
+    for (linha = 0; linha < (unsigned) resultadoAux.size(); linha++)
+    {
+        resultado[linha].resize(resultadoAux[0].size());
+        for(coluna = 0; coluna < (unsigned) resultadoAux[0].size(); coluna++)
+            resultado[linha][coluna] = resultadoAux[linha][coluna];
+    }
+
     return OK;
 }
 
