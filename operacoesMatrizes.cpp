@@ -78,6 +78,11 @@ double Modulo (double numero)
     return numero;
 }
 
+double ModuloVetor(vector<double> vetor)
+{
+    return sqrt( pow(vetor[0], 2) + pow(vetor[1], 2));
+}
+
 
 int InverterDxD (vector<vector<double>> &m1)
 {

@@ -124,7 +124,6 @@ bool AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, ve
         return !OK;
     escalarAuxiliar = 1 + (MultiplicarMatrizes(resultadoAuxiliar, q) / denominador);
 
-
     /*Logo depois do parenteses*/
     MultiplicarMatrizes(p, pt, resultadoParcial);
     for (auto &vect: resultadoParcial)
@@ -140,17 +139,13 @@ bool AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, ve
     MultiplicarMatrizes(matrizH, q, resultadoAuxiliar2);
     MultiplicarMatrizes(resultadoAuxiliar2, pt, resultadoAuxiliar2);
     OperarMatrizes(resultadoAuxiliar, resultadoAuxiliar2, resultadoAuxiliar, OPCAO_SOMA);
+
     for (auto &vect: resultadoAuxiliar)
         for(auto &var: vect)
             var /= denominador;
-
     OperarMatrizes(resultadoParcial, resultadoAuxiliar, resultadoParcial, OPCAO_SUBTRACAO);
-    OperarMatrizes(matrizH, resultadoParcial, matrizH, OPCAO_SOMA);
 
-    // PrintarMatriz (matrizH);
-    // cout << endl << endl;
-    // cout << "pula" << endl;
-    // PrintarMatriz(pt);
+    OperarMatrizes(matrizH, resultadoParcial, matrizH, OPCAO_SOMA);
 
     return OK;
 }
@@ -208,10 +203,13 @@ double BuscaArmijo (vector<double> pontox, vector<vector<double>> direcao, vecto
         auxVector.push_back(dir);
         gradienteTransposto.push_back(auxVector);
     }
+
     while (PhiDeT(pontox, t, direcao) >
     ( funcao(pontox[0], pontox[1]) + eta*t*MultiplicarMatrizes(gradienteTransposto, direcao)))
+    {
         t *= gama;
-
+        // cout << "PhideT: " << PhiDeT(pontox, t, direcao) << " OutraParte: " << funcao(pontox[0], pontox[1]) + eta*t*MultiplicarMatrizes(gradienteTransposto, direcao) << "T: " << t << endl;
+    }
     return t;
 }
 
@@ -243,7 +241,8 @@ double MetodoGradiente (vector<double> &pontox, bool metodo, double ro, double e
     /*Gradiente negativo*/
     // cout << "calculou o gradiente" << endl;
 
-    while(Modulo(gradiente[0]) > epsolon && Modulo(gradiente[1]) > epsolon)
+    // while(Modulo(gradiente[0]) > epsolon || Modulo(gradiente[1]) > epsolon)
+    while(ModuloVetor(gradiente) > epsolon && k < 1000)
     {
         // cout << endl << endl << "Gradiente: (" << gradiente[0] << "," << gradiente[1] << ")" << endl;
         /*d = -gradiente transposto*/
@@ -252,11 +251,6 @@ double MetodoGradiente (vector<double> &pontox, bool metodo, double ro, double e
             auxiliar.push_back(var*-1);
             direcao.push_back(auxiliar);
             auxiliar.clear();
-        }
-        if (k < 2)
-        {
-            PrintarMatriz(direcao);
-            cout << endl << endl;
         }
         /*metodo armijo ou secao aurea*/
         if (metodo == BUSCA_ARMIJO)
@@ -267,6 +261,7 @@ double MetodoGradiente (vector<double> &pontox, bool metodo, double ro, double e
         for (index = 0; index < (unsigned) pontox.size(); index++)
             pontox[index] += t * direcao[index][0];
         k++;
+        cout << "pontox = " << pontox[0] << ", " << pontox[1] << endl;
         // cout << "K = " << k-1 << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
         // cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
         GradienteF(pontox[0], pontox[1], gradiente);
@@ -274,6 +269,8 @@ double MetodoGradiente (vector<double> &pontox, bool metodo, double ro, double e
     }
     cout << "K = " << k << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
     cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
+    cout << "gradiente" << endl;
+    cout << gradiente[0] << ", " << gradiente[1] << endl;
     return funcao(pontox[0], pontox[1]);
 
 }
@@ -338,6 +335,7 @@ double MetodoNewton (vector<double> &pontox, bool metodo, double epsolon, double
     }
     cout << "K = " << k-1 << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
     cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
+
     return funcao (pontox[0], pontox[1]);
 
 }
@@ -385,6 +383,7 @@ double MetodoQuaseNewton(vector<double> &pontox, bool metodo, double epsolon, do
         gradienteAntigo[0].push_back(auxGradiente[0]);
         gradienteAntigo[1].push_back(auxGradiente[1]);
 
+        InverterDxD(matrizH);
         MultiplicarMatrizes(matrizH, gradienteAntigo, direcao);
         // if ( k < 4)
         // {

@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 #define OK                      0
 #define ERRO_DIMENSAO_MATRIZ    1
@@ -23,6 +24,7 @@ int OperarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector
 void PrintarMatriz (vector<vector<double>> m1);
 int InverterDxD (vector<vector<double>> &m1);
 
+double ModuloVetor(vector<double> vetor);
 
 double Modulo (double numero);
 
