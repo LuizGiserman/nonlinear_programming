@@ -2,7 +2,7 @@
 #include <vector>
 #include "operacoesMatrizes.h"
 
-double MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector<vector<double>> &resultado)
+int MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector<vector<double>> &resultado)
 {
 
     unsigned linha, coluna, index;
@@ -53,8 +53,16 @@ double MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2
     return MultiplicarMatrizes(m1, m2, resultado);
 }
 
+double MultiplicarMatrizes( vector<double> v1, vector<vector<double>> m2)
+{
+    unsigned index;
+    vector<vector<double>> m1;
+    m1.push_back(v1);
+    return MultiplicarMatrizes(m1, m2);
+}
+
 /*matriz X vetor*/
-double MultiplicarMatrizes (vector<vector<double>> m1, vector<double> v1, vector<vector<double>> &resultado)
+int MultiplicarMatrizes (vector<vector<double>> m1, vector<double> v1, vector<vector<double>> &resultado)
 {
     vector<vector<double>> m2;
     m2.push_back(v1);
@@ -132,4 +140,21 @@ int OperarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector
     }
 
     return OK;
+}
+
+double ModuloMatrizDxD (vector<vector<double>> &matriz)
+{
+    unsigned linha, coluna;
+    double soma = 0;
+
+    if (matriz.size() == 0)
+        return ERRO_DIMENSAO_MATRIZ;
+    if (matriz[0].size() == 0)
+        return ERRO_DIMENSAO_MATRIZ;
+
+    for (linha = 0; linha < matriz.size(); linha++)
+        for (coluna = 0; coluna < matriz[0].size(); coluna++)
+            soma += pow(matriz[linha][coluna], 2);
+
+    return sqrt(soma);
 }

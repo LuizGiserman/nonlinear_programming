@@ -15,16 +15,21 @@
 
 using namespace std;
 
-double MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector<vector<double>> &resultado);
+int MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector<vector<double>> &resultado);
 /*Para quando a resposta esta no R1*/
 double MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2);
 /*matriz X vetor*/
-double MultiplicarMatrizes (vector<vector<double>> m1, vector<double> v1, vector<vector<double>> &resultado);
+int MultiplicarMatrizes (vector<vector<double>> m1, vector<double> v1, vector<vector<double>> &resultado);
+
+/*vector X matriz(vector)*/
+double MultiplicarMatrizes( vector<double> v1, vector<vector<double>> m2);
+
 int OperarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector<vector<double>> &resultado, bool soma);
 void PrintarMatriz (vector<vector<double>> m1);
 int InverterDxD (vector<vector<double>> &m1);
 
 double ModuloVetor(vector<double> vetor);
+double ModuloMatrizDxD (vector<vector<double>> &matriz);
 
 double Modulo (double numero);
 

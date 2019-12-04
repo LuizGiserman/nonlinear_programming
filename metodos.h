@@ -19,6 +19,8 @@ double DerivadaX1 (double x1, double x2);
 double DerivadaX2 (double x1, double x2);
 void GradienteF (double x1, double x2, vector<double> &gradiente);
 double PhiDeT (vector<double> pontox, double t, vector<vector<double>> direcao);
+void SegundaDerivada (vector<vector<double>> &segundaDerivada, vector<double> pontox);
+
 
 void CalcularHessiana(vector<double> pontox, vector<vector<double>> &hessiana);
 
