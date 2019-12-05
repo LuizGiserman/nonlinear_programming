@@ -256,13 +256,14 @@ double MetodoGradiente (vector<double> &pontox, bool metodo, double ro, double e
     // cout << "calculou o gradiente" << endl;
 
     while( Modulo(gradiente[0]) > epsolon && Modulo(gradiente[1]) > epsolon &&
-    (Modulo(ModuloVetor(pontox) - ModuloVetor(pontoxAntigo))> epsolon))
+    (Modulo(ModuloVetor(pontox) - ModuloVetor(pontoxAntigo)) > epsolon))
     {
         pontoxAntigo.clear();
         for (auto const &x: pontox)
             pontoxAntigo.push_back(x);
 
         // cout << endl << endl << "Gradiente: (" << gradiente[0] << "," << gradiente[1] << ")" << endl;
+
         /*d = -gradiente transposto*/
         for (auto const &var: gradiente)
         {
@@ -286,7 +287,6 @@ double MetodoGradiente (vector<double> &pontox, bool metodo, double ro, double e
         cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
         GradienteF(pontox[0], pontox[1], gradiente);
         direcao.clear();
-        cout << "modularrrrr: " << Modulo(ModuloVetor(pontox) - ModuloVetor(pontoxAntigo)) << endl;
     }
     // cout << "K = " << k << " | pontox = (" << pontox[0] << "," << pontox[1] << ")" << endl;
     // cout << "funcao dps de atualizar = " << funcao(pontox[0], pontox[1]) << endl;
@@ -412,7 +412,7 @@ double MetodoQuaseNewton(vector<double> &pontox, bool metodo, double epsolon, do
 
 
     while ((Modulo(gradiente[0][0]) > epsolon) && (Modulo(gradiente[1][0]) > epsolon) &&
-     (Modulo(ModuloMatrizDxD(matrizH) - moduloMatrizHAntiga)) > epsolon && (Modulo(ModuloVetor(pontox) - ModuloVetor(pontoxAntigo))> epsolon))
+     (Modulo(ModuloMatrizDxD(matrizH) - moduloMatrizHAntiga)) > epsolon) // && (Modulo(ModuloVetor(pontox) - ModuloVetor(pontoxAntigo))> epsolon))
     {
         pontoxAntigo.clear();
         for (auto const &x: pontox)
