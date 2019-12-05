@@ -7,8 +7,8 @@ int main ()
 
     vector<double> pontox;
     double x1, x2;
-    x1 = -5;
-    x2 = 1;
+    x1 = 200;
+    x2 = 10;
     pontox.push_back(x1);
     pontox.push_back(x2);
     double index;
@@ -40,9 +40,9 @@ int main ()
     // for (index = 0.01; index <= 0.1; index+=0.01)
     {
         // cout << "Index: " << index << endl;
-        MetodoQuaseNewton(pontox, BUSCA_SECAO_AUREA,  0.0000001, 0.01, 0, 0);
+        // MetodoQuaseNewton(pontox, BUSCA_ARMIJO,  0.0000001, 0.01, 0.8, 0.25);
         // MetodoQuaseNewton(pontox, BUSCA_ARMIJO, 0.0000001, 0.01, 0.25, 0.7);
-        // MetodoNewton(pontox, BUSCA_ARMIJO, 0.0001, 0.7, 0.25);
+        MetodoNewton(pontox, BUSCA_ARMIJO, 0.0001, 0.7, 0.25);
         // MetodoNewton(pontox, BUSCA_SECAO_AUREA, 0.0000001, 0.01);
         // MetodoGradiente(pontox, BUSCA_ARMIJO, 0.0000001, 0.25, 0.8);
         // MetodoGradiente(pontox, BUSCA_SECAO_AUREA,0.01, 0.0000001);

@@ -423,8 +423,8 @@ double MetodoQuaseNewton(vector<double> &pontox, bool metodo, double epsolon, do
         pontoxAntigo.push_back(x*30);
 
 
-    while ((Modulo(gradiente[0][0]) > epsolon) && (Modulo(gradiente[1][0]) > epsolon) &&
-     ((Modulo(ModuloMatrizDxD(matrizH) - moduloMatrizHAntiga)) > epsolon) && (Modulo(ModuloVetor(pontox) - ModuloVetor(pontoxAntigo)) > epsolon))
+    while ((Modulo(gradiente[0][0]) > epsolon) && (Modulo(gradiente[1][0]) > epsolon)  )//&&
+     // (Modulo(ModuloMatrizDxD(matrizH) - moduloMatrizHAntiga) > epsolon) && (Modulo(ModuloVetor(pontox) - ModuloVetor(pontoxAntigo)) > epsolon))
     {
         pontoxAntigo.clear();
         for (auto const &x: pontox)
