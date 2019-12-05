@@ -2,7 +2,7 @@
 #include <vector>
 #include "operacoesMatrizes.h"
 
-int MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector<vector<double>> &resultado)
+double MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector<vector<double>> &resultado)
 {
 
     unsigned linha, coluna, index;
@@ -30,9 +30,12 @@ int MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, v
                 // cout << "m2["<< index << "][" << linha << "] " << m2[index][linha] << endl;
             }
     }
-
+    // cout << "resultado aqui" << resultadoAux[0][0] << endl;
     if (m1.size() == 1 && m2[0].size() == 1 )
+    {
+        // cout << "entrou" << endl;
         return resultadoAux[0][0];
+    }
 
     /*tendo que fazer isso tudo pq resultado pode ser uma das matrizes de entrada*/
     resultado.clear();
@@ -62,7 +65,7 @@ double MultiplicarMatrizes( vector<double> v1, vector<vector<double>> m2)
 }
 
 /*matriz X vetor*/
-int MultiplicarMatrizes (vector<vector<double>> m1, vector<double> v1, vector<vector<double>> &resultado)
+double MultiplicarMatrizes (vector<vector<double>> m1, vector<double> v1, vector<vector<double>> &resultado)
 {
     vector<vector<double>> m2;
     m2.push_back(v1);

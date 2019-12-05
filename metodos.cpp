@@ -129,9 +129,19 @@ bool AtualizarMatrizH(vector<vector<double>> &matrizH, vector<double> pontox, ve
         }
     }
 
+    // cout << "p" << endl;
+    // PrintarMatriz(p);
+    // cout << "pt" << endl;
+    // PrintarMatriz(pt);
+    // cout << "q" << endl;
+    // PrintarMatriz(q);
+    // cout << "qt" << endl;
+    // PrintarMatriz(qt);
+
     /*1 + esse coisa*/
     MultiplicarMatrizes(qt, matrizH, resultadoAuxiliar);
     denominador = MultiplicarMatrizes(pt, q);
+    // cout << "denominador: "  << denominador << endl;
     if(denominador == 0)
         return !OK;
     escalarAuxiliar = 1 + (MultiplicarMatrizes(resultadoAuxiliar, q) / denominador);
@@ -255,8 +265,8 @@ double MetodoGradiente (vector<double> &pontox, bool metodo, double ro, double e
     /*Gradiente negativo*/
     // cout << "calculou o gradiente" << endl;
 
-    while( Modulo(gradiente[0]) > epsolon && Modulo(gradiente[1]) > epsolon &&
-    (Modulo(ModuloVetor(pontox) - ModuloVetor(pontoxAntigo)) > epsolon))
+    while( Modulo(gradiente[0]) > epsolon && Modulo(gradiente[1]) > epsolon) //&&
+    // (Modulo(ModuloVetor(pontox) - ModuloVetor(pontoxAntigo)) > epsolon))
     {
         pontoxAntigo.clear();
         for (auto const &x: pontox)
@@ -365,6 +375,8 @@ double MetodoNewton (vector<double> &pontox, bool metodo, double epsolon, double
         GradienteF(pontox[0], pontox[1], auxGradiente);
         gradiente[0][0] = auxGradiente[0];
         gradiente[1][0] = auxGradiente[1];
+        cout << "modulo: " << Modulo(ModuloVetor(pontox) - ModuloVetor(pontoxAntigo)) << endl;
+
 
     }
 
@@ -412,7 +424,7 @@ double MetodoQuaseNewton(vector<double> &pontox, bool metodo, double epsolon, do
 
 
     while ((Modulo(gradiente[0][0]) > epsolon) && (Modulo(gradiente[1][0]) > epsolon) &&
-     (Modulo(ModuloMatrizDxD(matrizH) - moduloMatrizHAntiga)) > epsolon) // && (Modulo(ModuloVetor(pontox) - ModuloVetor(pontoxAntigo))> epsolon))
+     ((Modulo(ModuloMatrizDxD(matrizH) - moduloMatrizHAntiga)) > epsolon) && (Modulo(ModuloVetor(pontox) - ModuloVetor(pontoxAntigo)) > epsolon))
     {
         pontoxAntigo.clear();
         for (auto const &x: pontox)
@@ -423,7 +435,15 @@ double MetodoQuaseNewton(vector<double> &pontox, bool metodo, double epsolon, do
         gradienteAntigo[0].push_back(auxGradiente[0]);
         gradienteAntigo[1].push_back(auxGradiente[1]);
 
+        // cout << "Matriz H" << endl;
+        // PrintarMatriz(matrizH);
+        // cout << "Gradiente" << endl;
+        // PrintarMatriz(gradiente);
+
         MultiplicarMatrizes(matrizH, gradienteAntigo, direcao);
+
+        // cout << "direcao" << endl;
+        // PrintarMatriz(direcao);
 
         if (metodo == BUSCA_SECAO_AUREA)
             t = SecaoAurea (ro, epsolon, pontox, direcao);

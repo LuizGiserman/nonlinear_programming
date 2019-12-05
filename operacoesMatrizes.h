@@ -15,11 +15,11 @@
 
 using namespace std;
 
-int MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector<vector<double>> &resultado);
+double MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2, vector<vector<double>> &resultado);
 /*Para quando a resposta esta no R1*/
 double MultiplicarMatrizes (vector<vector<double>> m1, vector<vector<double>> m2);
 /*matriz X vetor*/
-int MultiplicarMatrizes (vector<vector<double>> m1, vector<double> v1, vector<vector<double>> &resultado);
+double MultiplicarMatrizes (vector<vector<double>> m1, vector<double> v1, vector<vector<double>> &resultado);
 
 /*vector X matriz(vector)*/
 double MultiplicarMatrizes( vector<double> v1, vector<vector<double>> m2);
