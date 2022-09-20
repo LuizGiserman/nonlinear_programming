@@ -21,5 +21,5 @@ ax = plt.axes(projection='3d')
 ax.contour3D(X, Y, Z, 50, cmap='binary')
 ax.set_xlabel('x')
 ax.set_ylabel('y')
-ax.set_zlabel('z');
+ax.set_zlabel('z')
 plt.show()
